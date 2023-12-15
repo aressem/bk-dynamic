@@ -15,7 +15,8 @@ cat <<EOF | buildkite-agent pipeline upload
 steps:
   - label: ":pipeline: dynamicly generated build"
     command: |
+      pwd
       git clone --depth 1 https://github.com/vespa-engine/vespa
-      find $HOME/.buildkite | grep vespa
+      find $HOME | grep vespa
 EOF
 
