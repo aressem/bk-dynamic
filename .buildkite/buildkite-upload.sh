@@ -10,7 +10,7 @@ echo "BUILDKITE_BUILD_ID = $BUILDKITE_BUILD_ID"
  
 echo "--- :pipeline_upload: uploading pipeline"
 
-cat <<EOF | /usr/bin/buildkite-agent pipeline upload 
+cat <<EOF | buildkite-agent pipeline upload 
 
 steps:
   - label: ":pipeline: dynamicly generated pipeline"
