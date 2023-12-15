@@ -23,7 +23,5 @@ steps:
 
       make -C vespa -f .copr/Makefile rpms outdir=$(pwd)
 
-      buildkite-agent artifact upload *.rpm
-
 EOF
 
