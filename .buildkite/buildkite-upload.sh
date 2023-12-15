@@ -14,13 +14,8 @@ cat <<EOF | buildkite-agent pipeline upload
 
 steps:
   - label: ":pipeline: dynamicly generated build"
-    plugins:
-      - hasura/smooth-checkout#v3.1.0:
-          repos:
-            - config:
-              - url: "https://github.com/vespa-engine/vespa.git"
-              - ref: "master"
-              - clone_flags: "--depth 1"
-    command: find $HOME/.buildkite 
+    command: |
+      git clone --depth 1 https://github.com/vespa-engine/vespa
+      find $HOME/.buildkite | grep vespa
 EOF
 
