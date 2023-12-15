@@ -1,0 +1,5 @@
+
+steps:
+  - label: ":pipeline: generate pipeline"
+    key: "pipeline-gen"
+    command: ".buildkite/buildkite-upload.sh"
