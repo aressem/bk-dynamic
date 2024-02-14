@@ -23,7 +23,7 @@ steps:
         - image: docker.io/vespaengine/vespa-build-almalinux-8
           command: [sh, -c]
           args:
-          - "'echo Hello World!'"
+          - "'pwd && git clone --quiet --depth 1 https://github.com/vespa-engine/vespa && export VESPA_VERSION=8.999.1 && (cd vespa && git tag v${VESPA_VERSION}) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd)'"
 EOF
 
 #steps:
