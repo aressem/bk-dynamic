@@ -19,6 +19,8 @@ steps:
   plugins:
   - kubernetes:
       podSpec:
+        nodeSelector:
+          node-arch: arm64
         containers:
         - image: docker.io/vespaengine/vespa-build-almalinux-8
           command: [sh, -c]
