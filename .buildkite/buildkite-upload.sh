@@ -13,15 +13,29 @@ echo "--- :pipeline_upload: uploading pipeline"
 cat <<'EOF' | buildkite-agent pipeline upload 
 
 steps:
-  - label: ":pipeline: dynamicly generated build"
-    command: |
-      pwd
-      git clone --quiet --depth 1 https://github.com/vespa-engine/vespa
-      
-      export VESPA_VERSION=8.999.1
-      (cd vespa && git tag v${VESPA_VERSION})
-
-      make -C vespa -f .copr/Makefile rpms outdir=$(pwd)
-
+- label: Hello World!
+  agents:
+    queue: default
+  plugins:
+  - kubernetes:
+      podSpec:
+        containers:
+        - image: docker.io/vespaengine/vespa-build-almalinux-8
+          command: [sh, -c]
+          args:
+          - "'echo Hello World!'"
 EOF
+
+#steps:
+#  - label: ":pipeline: dynamicly generated build"
+#    command: |
+#      pwd
+#      git clone --quiet --depth 1 https://github.com/vespa-engine/vespa
+#
+#      export VESPA_VERSION=8.999.1
+#      (cd vespa && git tag v${VESPA_VERSION})
+#
+#      make -C vespa -f .copr/Makefile rpms outdir=$(pwd)
+#
+#EOF
 
