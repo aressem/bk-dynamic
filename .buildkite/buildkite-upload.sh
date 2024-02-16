@@ -29,8 +29,8 @@ steps:
           - "'pwd && git clone --quiet --depth 1 https://github.com/vespa-engine/vespa && export VESPA_VERSION=8.999.1 && (cd vespa && git tag v${VESPA_VERSION}) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd)'"
           resources:
             limits:
-              cpu: "31"
-              memory: "63G"
+              cpu: "7"
+              memory: "30G"
 EOF
 
 #steps:
