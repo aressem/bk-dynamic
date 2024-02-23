@@ -2,4 +2,8 @@
 steps:
   - label: ":pipeline: generate pipeline"
     key: "pipeline-gen"
-    command: ".buildkite/buildkite-upload.sh"
+#    command: ".buildkite/buildkite-upload.sh"
+    command: |
+      cd .buildkite
+      go get
+      go run main.go | buildkite-agent pipeline upload
