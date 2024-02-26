@@ -20,7 +20,7 @@ func main() {
                 "containers": []any{
                     map[string]any{
                         "args": []string{
-                            "'pwd && git clone --quiet --depth 1 https://github.com/vespa-engine/vespa && buildkite-agent artifact upload vespa/README.md && export VESPA_VERSION=8.999.1 && (cd vespa && git tag v\\$VESPA_VERSION) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd) && buildkite-agent artifact upload *.rpm'",
+                            "'pwd && git clone --quiet --depth 1 https://github.com/vespa-engine/vespa && buildkite-agent artifact upload vespa/README.md && export VESPA_VERSION=8.999.1 && (cd vespa && git tag v\\$VESPA_VERSION) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd) && buildkite-agent artifact upload vespa-8.999.1-1.el8.src.rpm'",
                         },
                         "command": []any{
                             "sh",
