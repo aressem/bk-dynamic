@@ -1,10 +1,11 @@
-
 steps:
-  - label: ":pipeline: generate pipeline"
-    key: "pipeline-gen"
-#    command: ".buildkite/buildkite-upload.sh"
-    image: docker.io/vespaengine/vespa-build-almalinux-8
-    command: |
-      cd .buildkite
-      go get
-      go run main.go | buildkite-agent pipeline upload
+- label: ":pipeline: Generate dynamic pipeline"
+  key: "pipeline-gen"
+  plugins:
+  - kubernetes:
+      podSpec:
+        containers:
+        - image: docker.io/vespaengine/vespa-build-almalinux-8
+          command: [sh, -c]
+          args:
+          - "'cd .buildkite && go get && (go run main.go | buildkite-agent pipeline upload)'"
