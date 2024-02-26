@@ -3,6 +3,7 @@ steps:
   - label: ":pipeline: generate pipeline"
     key: "pipeline-gen"
 #    command: ".buildkite/buildkite-upload.sh"
+    image: docker.io/vespaengine/vespa-build-almalinux-8
     command: |
       cd .buildkite
       go get
