@@ -17,6 +17,20 @@ func main() {
         Source: "kubernetes",
         Config: map[string]any{
             "podSpec": map[string]any{
+                "volumes": []any{
+                    map[string]any{
+                        "name": "maven-m2-cache",
+                        "persistentVolumeClaim": map[string]string{
+                            "claimName": "vespa-build-maven-cache",
+                        },
+                    },
+                    map[string]any{
+                        "name": "gcc-ccache",
+                        "persistentVolumeClaim": map[string]string{
+                            "claimName": "vespa-build-ccache",
+                        },
+                    },
+                },
                 "containers": []any{
                     map[string]any{
                         "args": []string{
@@ -29,8 +43,18 @@ func main() {
                         "image": "docker.io/vespaengine/vespa-build-almalinux-8",
                         "resources": map[string]any{
                             "limits": map[string]any{
-                                "cpu":    "7",
-                                "memory": "24G",
+                                "cpu":    "15",
+                                "memory": "30G",
+                            },
+                        },
+                        "volumeMounts": []any{
+                            map[string]any{
+                                "mountPath": "/root/.m2",
+                                "name":      "vespa-build-maven-cache",
+                            },
+                            map[string]any{
+                                "mountPath": "/root/.ccache",
+                                "name":      "vespa-build-ccache",
                             },
                         },
                     },
@@ -53,4 +77,3 @@ func main() {
 
     fmt.Println(string(yout))
 }
-
