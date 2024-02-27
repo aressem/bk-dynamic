@@ -20,7 +20,7 @@ func main() {
     //	fmt.Printf("VESPA_VERSION: %s\n\n", vespaVersion)
     //	fmt.Printf("VESPA_GITREF: %s\n\n", vespaGitref)
 
-    cmd := fmt.Sprintf("'pwd && ccache -z -M 20G && git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa && "+
+    cmd := fmt.Sprintf("'pwd && du -sh /root/.* && ccache -s && ccache -z -M 20G && git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa && "+
         "(cd vespa && git checkout %s) && buildkite-agent artifact upload vespa/README.md && export VESPA_VERSION=%s "+
         "&& (cd vespa && git tag v\\$VESPA_VERSION) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd) "+
         "&& ccache -s && buildkite-agent artifact upload vespa-\\$VESPA_VERSION-1.el8.src.rpm'", vespaGitref, vespaVersion)
