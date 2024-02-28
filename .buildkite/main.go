@@ -44,20 +44,20 @@ func main() {
 		Source: "kubernetes",
 		Config: map[string]any{
 			"podSpec": map[string]any{
-				/*				"volumes": []any{
-								map[string]any{
-									"name": "vespa-build-maven-cache",
-									"persistentVolumeClaim": map[string]string{
-										"claimName": "vespa-build-maven-cache",
-									},
-								},
-								map[string]any{
-									"name": "vespa-build-ccache",
-									"persistentVolumeClaim": map[string]string{
-										"claimName": "vespa-build-ccache",
-									},
-								},
-							},*/
+				"volumes": []any{
+					map[string]any{
+						"name": "vespa-build-maven-cache",
+						"persistentVolumeClaim": map[string]string{
+							"claimName": "vespa-build-maven-cache",
+						},
+					},
+					map[string]any{
+						"name": "vespa-build-ccache",
+						"persistentVolumeClaim": map[string]string{
+							"claimName": "vespa-build-ccache",
+						},
+					},
+				},
 				"containers": []any{
 					map[string]any{
 						"args": []string{
@@ -81,16 +81,16 @@ func main() {
 								"memory": "30G",
 							},
 						},
-						/*						"volumeMounts": []any{
-												map[string]any{
-													"mountPath": "/root/.m2",
-													"name":      "vespa-build-maven-cache",
-												},
-												map[string]any{
-													"mountPath": "/root/.ccache",
-													"name":      "vespa-build-ccache",
-												},
-											},*/
+						"volumeMounts": []any{
+							map[string]any{
+								"mountPath": "/root/.m2",
+								"name":      "vespa-build-maven-cache",
+							},
+							map[string]any{
+								"mountPath": "/root/.ccache",
+								"name":      "vespa-build-ccache",
+							},
+						},
 					},
 				},
 				"nodeSelector": map[string]any{
