@@ -68,6 +68,12 @@ func main() {
 							"sh",
 							"-c",
 						},
+						"env": []any{
+							map[string]string{
+								"name":  "BUILDKITE_S3_ACL",
+								"value": "private",
+							},
+						},
 						"image": "docker.io/vespaengine/vespa-build-almalinux-8",
 						"resources": map[string]any{
 							"limits": map[string]any{
