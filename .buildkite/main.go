@@ -28,7 +28,7 @@ func main() {
 		"&& git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa "+
 		"&& (cd vespa && git checkout %s) && export VESPA_VERSION=%s "+
 		"&& (cd vespa && git tag v\\$VESPA_VERSION) "+
-		"&& echo make -C vespa -f .copr/Makefile rpms outdir=$(pwd) "+
+		"&& make -C vespa -f .copr/Makefile rpms outdir=$(pwd) "+
 		"&& ccache -s "+
 		"&& buildkite-agent artifact upload vespa/README.md "+
 		"&& buildkite-agent artifact upload vespa/README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID' ",
@@ -61,7 +61,6 @@ func main() {
 				"containers": []any{
 					map[string]any{
 						"args": []string{
-							//"'pwd && git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa && buildkite-agent artifact upload vespa/README.md && export VESPA_VERSION=8.999.1 && (cd vespa && git tag v\\$VESPA_VERSION) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd) && buildkite-agent artifact upload vespa-8.999.1-1.el8.src.rpm'",
 							cmd,
 						},
 						"command": []any{
