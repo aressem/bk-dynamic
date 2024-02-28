@@ -28,7 +28,7 @@ func main() {
 		"&& git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa "+
 		"&& (cd vespa && git checkout %s) && export VESPA_VERSION=%s "+
 		"&& (cd vespa && git tag v\\$VESPA_VERSION) "+
-		"&& echo 'make -C vespa -f .copr/Makefile rpms outdir=$(pwd)' "+
+		"&& echo make -C vespa -f .copr/Makefile rpms outdir=$(pwd) "+
 		"&& ccache -s "+
 		"&& buildkite-agent artifact upload vespa/README.md "+
 		"&& buildkite-agent artifact upload vespa/README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID' ",
