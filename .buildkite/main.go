@@ -20,10 +20,19 @@ func main() {
 	//	fmt.Printf("VESPA_VERSION: %s\n\n", vespaVersion)
 	//	fmt.Printf("VESPA_GITREF: %s\n\n", vespaGitref)
 
-	cmd := fmt.Sprintf("'pwd && du -sh /root/.* && ccache -s &&     ccache -z -M 20G && git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa && "+
-		"(cd vespa && git checkout %s) && buildkite-agent artifact upload vespa/README.md && export VESPA_VERSION=%s "+
-		"&& (cd vespa && git tag v\\$VESPA_VERSION) && make -C vespa -f .copr/Makefile rpms outdir=$(pwd) "+
-		"&& ccache -s && buildkite-agent artifact upload vespa-\\$VESPA_VERSION-1.el8.src.rpm'", vespaGitref, vespaVersion)
+	cmd := fmt.Sprintf("'"+
+		"pwd "+
+		"&& du -sh /root/.* "+
+		"&& ccache -s "+
+		"&& ccache -z -M 20G "+
+		"&& git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa "+
+		"&& (cd vespa && git checkout %s) && export VESPA_VERSION=%s "+
+		"&& (cd vespa && git tag v\\$VESPA_VERSION) "+
+		"&& echo 'make -C vespa -f .copr/Makefile rpms outdir=$(pwd)' "+
+		"&& ccache -s "+
+		"&& buildkite-agent artifact upload vespa/README.md "+
+		"&& buildkite-agent artifact upload vespa/README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID' ",
+		vespaGitref, vespaVersion)
 
 	fmt.Println(cmd)
 
