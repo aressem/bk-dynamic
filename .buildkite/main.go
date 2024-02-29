@@ -23,8 +23,9 @@ func main() {
 	cmd := fmt.Sprintf("'"+
 		"pwd "+
 		//"&& du -sh /root/.* "+
-		"&& ccache -s "+
-		"&& ccache -z -M 20G "+
+		"&& mkdir -p /tmp/ccache_tmp "+
+		"&& ccache -s -p"+
+		"&& ccache -z -o temporary_dir=/tmp/ccache_tmp -o compression=1 -M 20G "+
 		"&& git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa "+
 		"&& (cd vespa && git checkout %s) && export VESPA_VERSION=%s "+
 		"&& (cd vespa && git tag v\\$VESPA_VERSION) "+
@@ -32,7 +33,10 @@ func main() {
 		"&& make -C vespa -f .copr/Makefile rpms outdir=$(pwd) "+
 		"&& ccache -s "+
 		"&& buildkite-agent artifact upload vespa/README.md "+
-		"&& buildkite-agent artifact upload vespa/README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID' ",
+		"&& buildkite-agent artifact upload vespa/README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID "+
+		"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cvf cache.tar  .ccache .m2/repository "+
+		"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts "+
+		"'",
 		vespaGitref, vespaVersion)
 
 	//fmt.Println(cmd)
