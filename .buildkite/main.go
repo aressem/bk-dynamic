@@ -25,7 +25,7 @@ func main() {
 		//"&& du -sh /root/.* "+
 		"&& mkdir -p /tmp/ccache_tmp "+
 		"&& ccache -s -p"+
-		"&& ccache -z -o temporary_dir=/tmp/ccache_tmp -o compression=1 -M 20G "+
+		"&& ccache -z -o temporary_dir=/tmp/ccache_tmp -o compression=true -M 20G "+
 		"&& git clone --quiet --depth 1000 https://github.com/vespa-engine/vespa "+
 		"&& (cd vespa && git checkout %s) && export VESPA_VERSION=%s "+
 		"&& (cd vespa && git tag v\\$VESPA_VERSION) "+
