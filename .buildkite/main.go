@@ -35,8 +35,9 @@ func main() {
         "&& ccache -s "+
         "&& buildkite-agent artifact upload vespa/README.md "+
         "&& buildkite-agent artifact upload vespa/README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID "+
-        "&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cvf cache.tar  .ccache .m2/repository "+
-        "&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts "+
+        "&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cvf cache.tar.gz  .ccache .m2/repository "+
+        "&& du -sh /root/.m2 && du -sh /root/.ccache "+
+        "&& buildkite-agent artifact upload cache.tar.gz s3://381492154096-build-artifacts "+
         "'",
         vespaGitref, vespaVersion)
 
