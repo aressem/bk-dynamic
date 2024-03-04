@@ -15,6 +15,8 @@ VESPA_CMAKE_SANITIZERS_OPTION=""
 
 export WORKDIR=/tmp
 
+source /etc/profile.d/enable-gcc-toolset.sh
+
 screwdriver/replace-vespa-version-in-poms.sh $VESPA_VERSION $(pwd)
 time make -C client/go BIN=$WORKDIR/vespa-install/opt/vespa/bin SHARE=$WORKDIR/vespa-install/usr/share install-all
 time ./bootstrap.sh java
