@@ -7,18 +7,52 @@ import (
 	"os"
 )
 
+func isPullRequest() bool {
+	return os.Getenv("BUILDKITE_PULL_REQUEST") != "false"
+}
+func getVolumes() []any {
+	if isPullRequest() {
+		return []any{}
+	} else {
+		return []any{
+			map[string]any{
+				"name": "vespa-build-maven-cache",
+				"persistentVolumeClaim": map[string]string{
+					"claimName": "vespa-build-maven-cache",
+				},
+			},
+			map[string]any{
+				"name": "vespa-build-ccache",
+				"persistentVolumeClaim": map[string]string{
+					"claimName": "vespa-build-ccache",
+				},
+			},
+		}
+	}
+}
+
+func getVolumeMounts() []any {
+	if isPullRequest() {
+		return []any{}
+	} else {
+		return []any{
+			map[string]any{
+				"name":      "vespa-build-maven-cache",
+				"mountPath": "/root/.m2",
+			},
+			map[string]any{
+				"name":      "vespa-build-ccache",
+				"mountPath": "/root/.ccache",
+			},
+		}
+	}
+}
 func main() {
 
 	vespaVersion := os.Getenv("VESPA_VERSION")
 	if len(vespaVersion) == 0 {
-		vespaVersion = "8.999.1"
+		panic("VESPA_VERSION not set")
 	}
-	vespaGitref := os.Getenv("VESPA_GITREF")
-	if len(vespaGitref) == 0 {
-		vespaGitref = "0420245d142858687f6d8b412fd08e8edf1018d5"
-	}
-	//	fmt.Printf("VESPA_VERSION: %s\n\n", vespaVersion)
-	//	fmt.Printf("VESPA_GITREF: %s\n\n", vespaGitref)
 
 	cmd := fmt.Sprintf("'" +
 		"pwd " +
@@ -34,7 +68,7 @@ func main() {
 		"&& ccache -s " +
 		"&& buildkite-agent artifact upload README.md " +
 		"&& buildkite-agent artifact upload README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID " +
-		"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cvf cache.tar  .ccache .m2/repository " +
+		"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
 		"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts " +
 		"&& buildkite-agent artifact download s3://381492154096-build-artifacts/cache.tar /tmp && ls -la /tmp " +
@@ -54,20 +88,7 @@ func main() {
 		Source: "kubernetes",
 		Config: map[string]any{
 			"podSpec": map[string]any{
-				"volumes": []any{
-					map[string]any{
-						"name": "vespa-build-maven-cache",
-						"persistentVolumeClaim": map[string]string{
-							"claimName": "vespa-build-maven-cache",
-						},
-					},
-					map[string]any{
-						"name": "vespa-build-ccache",
-						"persistentVolumeClaim": map[string]string{
-							"claimName": "vespa-build-ccache",
-						},
-					},
-				},
+				"volumes": getVolumes(),
 				"containers": []any{
 					map[string]any{
 						"args": []string{
@@ -90,16 +111,7 @@ func main() {
 								"memory": "30G",
 							},
 						},
-						"volumeMounts": []any{
-							map[string]any{
-								"mountPath": "/root/.m2",
-								"name":      "vespa-build-maven-cache",
-							},
-							map[string]any{
-								"mountPath": "/root/.ccache",
-								"name":      "vespa-build-ccache",
-							},
-						},
+						"volumeMounts": getVolumeMounts(),
 					},
 				},
 				"nodeSelector": map[string]any{
