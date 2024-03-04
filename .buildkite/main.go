@@ -37,6 +37,7 @@ func main() {
 		"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cvf cache.tar  .ccache .m2/repository " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
 		"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts " +
+		"&& buildkite-agent artifact download s3://381492154096-build-artifacts/cache.tar /tmp && ls -la /tmp " +
 		"'")
 
 	//fmt.Println(cmd)
