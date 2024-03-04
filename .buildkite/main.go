@@ -8,7 +8,8 @@ import (
 )
 
 func isPullRequest() bool {
-	return os.Getenv("BUILDKITE_PULL_REQUEST") != "false"
+	return true
+	//return os.Getenv("BUILDKITE_PULL_REQUEST") != "false"
 }
 func getVolumes() []any {
 	if isPullRequest() {
