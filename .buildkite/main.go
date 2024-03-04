@@ -8,8 +8,7 @@ import (
 )
 
 func isPullRequest() bool {
-	return true
-	//return os.Getenv("BUILDKITE_PULL_REQUEST") != "false"
+	return os.Getenv("BUILDKITE_PULL_REQUEST") != "false"
 }
 func getVolumes() []any {
 	if isPullRequest() {
@@ -53,7 +52,7 @@ func restoreCache() string {
 	if isPullRequest() {
 		return "&& dnf install -y python3.11-pip " +
 			"&& pip3 install awscli " +
-			"&& (aws s3 cp s3://381492154096-build-artifacts/cache.tar - | tar -C /root -x) "
+			"&& ( (aws s3 cp s3://381492154096-build-artifacts/cache.tar - | tar -C /root -x) || true) "
 	} else {
 		return ""
 	}
