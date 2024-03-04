@@ -30,7 +30,7 @@ func main() {
 		"&& export FACTORY_VESPA_VERSION=\\$VESPA_VERSION " +
 		"&& (git tag v\\$VESPA_VERSION) " +
 		"&& git clone --depth 1 https://github.com/aressem/bk-dynamic" +
-		"&& bk-dynamic/build-vespa.sh " +
+		"&& bk-dynamic/.buildkite/build-vespa.sh " +
 		"&& ccache -s " +
 		"&& buildkite-agent artifact upload README.md " +
 		"&& buildkite-agent artifact upload README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID " +
