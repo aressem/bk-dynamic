@@ -56,7 +56,7 @@ func main() {
 
 	cmd := fmt.Sprintf("'" +
 		"pwd " +
-		//"&& du -sh /root/.* "+
+		"&& buildkite-agent artifact search \"*\" " +
 		"&& mkdir -p /tmp/ccache_tmp " +
 		"&& ccache -s -p" +
 		"&& ccache -z -o temporary_dir=/tmp/ccache_tmp -o compression=true -M 20G " +
@@ -71,7 +71,7 @@ func main() {
 		"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
 		"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts " +
-		"&&  buildkite-agent artifact search \"*\" " +
+		"&& buildkite-agent artifact search \"*\" " +
 		"&& buildkite-agent artifact download s3://381492154096-build-artifacts/cache.tar /tmp && ls -la /tmp " +
 		"'")
 
