@@ -47,6 +47,25 @@ func getVolumeMounts() []any {
 		}
 	}
 }
+
+func restoreCache() string {
+	if isPullRequest() {
+		return "&& dnf install -y python3.11-pip " +
+			"&& pip3 install awscli " +
+			"&& (aws s3 cp s3://381492154096-build-artifacts/cache.tar - | tar -C /root -x) "
+	} else {
+		return ""
+	}
+}
+
+func saveCache() string {
+	if isPullRequest() {
+		return ""
+	} else {
+		return "&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository " +
+			"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts "
+	}
+}
 func main() {
 
 	vespaVersion := os.Getenv("VESPA_VERSION")
@@ -56,7 +75,7 @@ func main() {
 
 	cmd := fmt.Sprintf("'" +
 		"pwd " +
-		"&& buildkite-agent artifact search \"*\" --build 018e09e7-4bf4-423f-a802-c1eb6f3ba8e4" +
+		restoreCache() +
 		"&& mkdir -p /tmp/ccache_tmp " +
 		"&& ccache -s -p" +
 		"&& ccache -z -o temporary_dir=/tmp/ccache_tmp -o compression=true -M 20G " +
@@ -68,10 +87,8 @@ func main() {
 		"&& ccache -s " +
 		"&& buildkite-agent artifact upload README.md " +
 		"&& buildkite-agent artifact upload README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID " +
-		"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository " +
+		saveCache() +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
-		"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts " +
-		"&& buildkite-agent artifact download s3://381492154096-build-artifacts/cache.tar /tmp && ls -la /tmp " +
 		"'")
 
 	//fmt.Println(cmd)
