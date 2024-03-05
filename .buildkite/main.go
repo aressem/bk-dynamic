@@ -75,6 +75,7 @@ func main() {
 
 	cmd := fmt.Sprintf("'" +
 		"pwd " +
+		saveCache() +
 		restoreCache() +
 		"&& mkdir -p /tmp/ccache_tmp " +
 		"&& ccache -s -p" +
@@ -87,8 +88,8 @@ func main() {
 		"&& ccache -s " +
 		"&& buildkite-agent artifact upload README.md " +
 		"&& buildkite-agent artifact upload README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID " +
-		saveCache() +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
+		saveCache() +
 		"'")
 
 	//fmt.Println(cmd)
