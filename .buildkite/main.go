@@ -71,7 +71,8 @@ func main() {
 
 	vespaVersion := os.Getenv("VESPA_VERSION")
 	if len(vespaVersion) == 0 {
-		panic("VESPA_VERSION not set")
+		//panic("VESPA_VERSION not set")
+		vespaVersion = "8.999.999"
 	}
 
 	cmd := fmt.Sprintf("'" +
