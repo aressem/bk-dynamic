@@ -75,6 +75,7 @@ func main() {
 
 	cmd := fmt.Sprintf("'" +
 		"pwd " +
+		"&& find /root " +
 		saveCache() +
 		restoreCache() +
 		"&& mkdir -p /tmp/ccache_tmp " +
