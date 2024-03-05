@@ -28,5 +28,9 @@ func TestIsPullRequest(t *testing.T) {
 func TestMain_test(t *testing.T) {
 	os.Setenv("VESPA_VERSION", "9.0.0")
 	os.Setenv("BUILDKITE_PULL_REQUEST", "false")
+	if got := os.Getenv("BUILDKITE_PULL_REQUEST"); got != "false" {
+		t.Errorf("BUILDKITE_PULL_REQUEST = %v, want %v", got, "false")
+	}
+	
 	main()
 }

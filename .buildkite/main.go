@@ -62,8 +62,8 @@ func saveCache() string {
 	if isPullRequest() {
 		return ""
 	} else {
-		return "&& mkdir -p /root/.ccache /root/.m2/repository " +
-			"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository " +
+		return "&& mkdir -p /root/.ccache /root/.m2/repository /root/.go " +
+			"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository .go " +
 			"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts "
 	}
 }
