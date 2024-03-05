@@ -123,6 +123,10 @@ func main() {
 						},
 						"env": []any{
 							map[string]string{
+								"name":  "VESPA_VERSION",
+								"value": vespaVersion,
+							},
+							map[string]string{
 								"name":  "BUILDKITE_S3_ACL",
 								"value": "private",
 							},
