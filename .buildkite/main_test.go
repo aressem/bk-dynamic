@@ -31,6 +31,6 @@ func TestMain_test(t *testing.T) {
 	if got := os.Getenv("BUILDKITE_PULL_REQUEST"); got != "false" {
 		t.Errorf("BUILDKITE_PULL_REQUEST = %v, want %v", got, "false")
 	}
-	
+
 	main()
 }

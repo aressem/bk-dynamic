@@ -19,7 +19,7 @@ source /etc/profile.d/enable-gcc-toolset.sh
 
 screwdriver/replace-vespa-version-in-poms.sh $VESPA_VERSION $(pwd)
 time make -C client/go BIN=$WORKDIR/vespa-install/opt/vespa/bin SHARE=$WORKDIR/vespa-install/usr/share install-all
-time ./bootstrap.sh java
+time ./bootstrap.sh full
 time ./mvnw -T $NUM_THREADS $VESPA_MAVEN_EXTRA_OPTS install &> maven_output.log &
 cmake3 -DVESPA_UNPRIVILEGED=no $VESPA_CMAKE_SANITIZERS_OPTION .
 time make -j ${NUM_THREADS}
