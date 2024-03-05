@@ -9,7 +9,8 @@ export VESPA_MAVEN_EXTRA_OPTS="--show-version --batch-mode --no-snapshot-updates
 export GOPATH="/root/.go"
 
 export FACTORY_VESPA_VERSION=$VESPA_VERSION
-NUM_THREADS=$(( $(nproc) + 2 ))
+
+NUM_THREADS=$NUM_CPU_LIMIT
 
 VESPA_CMAKE_SANITIZERS_OPTION=""
 

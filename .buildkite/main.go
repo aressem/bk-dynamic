@@ -91,8 +91,7 @@ func main() {
 		"&& git clone --depth 1 https://github.com/aressem/bk-dynamic" +
 		"&& bk-dynamic/.buildkite/build-vespa.sh " +
 		"&& ccache -s " +
-		"&& buildkite-agent artifact upload README.md " +
-		"&& buildkite-agent artifact upload README.md s3://381492154096-build-artifacts/\\$BUILDKITE_JOB_ID " +
+		"&& buildkite-agent artifact upload '*.log' " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
 		saveCache() +
 		"'")
@@ -114,6 +113,7 @@ func main() {
 				"volumes": getVolumes(),
 				"containers": []any{
 					map[string]any{
+						"name": "build-container",
 						"args": []string{
 							cmd,
 						},
@@ -129,6 +129,15 @@ func main() {
 							map[string]string{
 								"name":  "BUILDKITE_S3_ACL",
 								"value": "private",
+							},
+							map[string]any{
+								"name": "NUM_CPU_LIMIT",
+								"valueFrom": map[string]any{
+									"resourceFieldRef": map[string]string{
+										"containerName": "build-container",
+										"resource":      "limits.cpu",
+									},
+								},
 							},
 						},
 						"image": "docker.io/vespaengine/vespa-build-almalinux-8",
