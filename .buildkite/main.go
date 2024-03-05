@@ -73,6 +73,7 @@ func main() {
 	if len(vespaVersion) == 0 {
 		if isPullRequest() {
 			vespaVersion = "8.999.999"
+			os.Setenv("VESPA_VERSION", vespaVersion)
 		} else {
 			panic("VESPA_VERSION not set")
 		}
