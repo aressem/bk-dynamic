@@ -31,6 +31,8 @@ time ./mvnw -T $NUM_THREADS $VESPA_MAVEN_EXTRA_OPTS install &> maven_output.log 
 cmake3 -DVESPA_UNPRIVILEGED=no $VESPA_CMAKE_SANITIZERS_OPTION .
 time make -j ${NUM_THREADS}
 time ctest3 --output-on-failure -j ${NUM_THREADS}
-time make -j ${NUM_THREADS} install DESTDIR=$WORKDIR/vespa-install
 
 time wait || (cat maven_output.log && exit 1)
+
+time make -j ${NUM_THREADS} install DESTDIR=$WORKDIR/vespa-install
+
