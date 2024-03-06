@@ -3,7 +3,7 @@
 set -euo pipefail
 
 export VESPA_MAVEN_EXTRA_OPTS="--show-version --batch-mode --no-snapshot-updates -Dmaven.javadoc.skip=true \
-  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:/tmp/artifacts/maven-repo" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
+  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/maven-repo" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
 #export CCACHE_TMP_DIR="/tmp/ccache_tmp"
 #export CCACHE_DATA_DIR="/tmp/vespa/ccache"
 #export MAIN_CACHE_FILE="/tmp/vespa.tar"
@@ -19,7 +19,7 @@ export WORKDIR=/tmp
 
 source /etc/profile.d/enable-gcc-toolset.sh
 
-mkdir -p /tmp/artifacts/{maven-repo,rpms}
+mkdir -p $(pwd)/artifacts/{maven-repo,rpms}
 
 screwdriver/replace-vespa-version-in-poms.sh $VESPA_VERSION $(pwd)
 time make -C client/go BIN=$WORKDIR/vespa-install/opt/vespa/bin SHARE=$WORKDIR/vespa-install/usr/share install-all
@@ -52,4 +52,4 @@ time rpmbuild --rebuild --define="_topdir $WORKDIR/vespa-rpmbuild" \
                         --define "_debugsource_template %{nil}" \
                         --define "installdir $WORKDIR/vespa-install" $WORKDIR/*.src.rpm
 
-mv /tmp/vespa-rpmbuild/RPMS/*/*.rpm /tmp/artifacts/rpms
+mv /tmp/vespa-rpmbuild/RPMS/*/*.rpm $(pwd)/artifacts/rpms

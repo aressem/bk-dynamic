@@ -72,7 +72,7 @@ func saveArtifacts(version string) string {
 	if isPullRequest() {
 		return ""
 	} else {
-		return "&& buildkite-agent artifact upload '/tmp/artifacts/**/*' s3://381492154096-build-artifacts/" + version + " "
+		return "&& buildkite-agent artifact upload 'artifacts/**/*' s3://381492154096-build-artifacts/" + version + " "
 	}
 }
 
