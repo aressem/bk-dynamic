@@ -37,3 +37,11 @@ time wait || (cat maven_output.log && exit 1)
 
 time make -j ${NUM_THREADS} install DESTDIR=$WORKDIR/vespa-install
 
+# Build RPMS
+ulimit -c 0
+echo "%_binary_payload w10T8.zstdio" >> $HOME/.rpmmacros
+time make  -f .copr/Makefile srpm outdir=$WORKDIR
+
+time rpmbuild --rebuild --define="_topdir $WORKDIR/vespa-rpmbuild" \
+                        --define "_debugsource_template %{nil}" \
+                        --define "installdir $WORKDIR/vespa-install" *.src.rpm
