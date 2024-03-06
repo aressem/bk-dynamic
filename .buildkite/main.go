@@ -67,8 +67,16 @@ func saveCache() string {
 			"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts "
 	}
 }
-func main() {
 
+func saveArtifacts(version string) string {
+	if isPullRequest() {
+		return ""
+	} else {
+		return "&& buildkite-agent artifact upload '/tmp/artifacts/**/*' s3://381492154096-build-artifacts/" + version + " "
+	}
+}
+
+func getVespaVersion() string {
 	vespaVersion := os.Getenv("VESPA_VERSION")
 	if len(vespaVersion) == 0 {
 		if isPullRequest() {
@@ -78,6 +86,11 @@ func main() {
 			panic("VESPA_VERSION not set")
 		}
 	}
+	return vespaVersion
+}
+func main() {
+
+	vespaVersion := getVespaVersion()
 
 	cmd := fmt.Sprintf("'" +
 		"pwd " +
@@ -94,6 +107,7 @@ func main() {
 		"&& buildkite-agent artifact upload '*.log' " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
 		saveCache() +
+		saveArtifacts(vespaVersion) +
 		"'")
 
 	//fmt.Println(cmd)
