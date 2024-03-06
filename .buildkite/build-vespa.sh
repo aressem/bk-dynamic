@@ -53,3 +53,7 @@ time rpmbuild --rebuild --define="_topdir $WORKDIR/vespa-rpmbuild" \
                         --define "installdir $WORKDIR/vespa-install" $WORKDIR/*.src.rpm
 
 mv /tmp/vespa-rpmbuild/RPMS/*/*.rpm $(pwd)/artifacts/rpms
+
+# Debug
+find $(pwd)/artifacts/maven-repo
+find $(pwd)/artifacts/rpms
