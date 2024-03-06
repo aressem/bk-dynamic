@@ -44,4 +44,4 @@ time make  -f .copr/Makefile srpm outdir=$WORKDIR
 
 time rpmbuild --rebuild --define="_topdir $WORKDIR/vespa-rpmbuild" \
                         --define "_debugsource_template %{nil}" \
-                        --define "installdir $WORKDIR/vespa-install" *.src.rpm
+                        --define "installdir $WORKDIR/vespa-install" $WORKDIR/*.src.rpm
