@@ -50,8 +50,7 @@ func getVolumeMounts() []any {
 
 func restoreCache() string {
 	if isPullRequest() {
-		return "&& dnf install -y python3.11-pip " +
-			"&& pip3 install awscli " +
+		return "&& dnf install -y awscli " +
 			"&& ( (aws s3 cp s3://381492154096-build-artifacts/cache.tar - | tar -C /root -x) || true) "
 	} else {
 		return ""

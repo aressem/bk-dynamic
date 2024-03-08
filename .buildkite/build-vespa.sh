@@ -3,7 +3,7 @@
 set -euo pipefail
 
 export VESPA_MAVEN_EXTRA_OPTS="--show-version --batch-mode --no-snapshot-updates -Dmaven.javadoc.skip=true \
-  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/maven-repo" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
+  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/maven-repo deploy" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
 #export CCACHE_TMP_DIR="/tmp/ccache_tmp"
 #export CCACHE_DATA_DIR="/tmp/vespa/ccache"
 #export MAIN_CACHE_FILE="/tmp/vespa.tar"
@@ -23,6 +23,8 @@ mkdir -p $(pwd)/artifacts/{maven-repo,rpms}
 
 screwdriver/replace-vespa-version-in-poms.sh $VESPA_VERSION $(pwd)
 time make -C client/go BIN=$WORKDIR/vespa-install/opt/vespa/bin SHARE=$WORKDIR/vespa-install/usr/share install-all
+
+
 time ./bootstrap.sh full
 
 # To allow Java and C++ tests to run in parallel, we need to copy the test jars
@@ -54,6 +56,7 @@ time rpmbuild --rebuild --define="_topdir $WORKDIR/vespa-rpmbuild" \
 
 mv /tmp/vespa-rpmbuild/RPMS/*/*.rpm $(pwd)/artifacts/rpms
 
+# Sign artifacts
 # Debug
-find $(pwd)/artifacts/maven-repo
-find $(pwd)/artifacts/rpms
+#find $(pwd)/artifacts/maven-repo
+#find $(pwd)/artifacts/rpms
