@@ -24,7 +24,8 @@ mkdir -p $(pwd)/artifacts/{maven-repo,rpms}
 screwdriver/replace-vespa-version-in-poms.sh $VESPA_VERSION $(pwd)
 time make -C client/go BIN=$WORKDIR/vespa-install/opt/vespa/bin SHARE=$WORKDIR/vespa-install/usr/share install-all
 
-
+# Having both install and deploy in the same maven command does not work
+sed -i 's,clean install,clean deploy,' bootstrap.sh
 time ./bootstrap.sh full
 
 # To allow Java and C++ tests to run in parallel, we need to copy the test jars
