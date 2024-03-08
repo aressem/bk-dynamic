@@ -3,7 +3,7 @@
 set -euo pipefail
 
 export VESPA_MAVEN_EXTRA_OPTS="--show-version --batch-mode --no-snapshot-updates -Dmaven.javadoc.skip=true \
-  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/maven-repo deploy" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
+  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/maven-repo" # deploy" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
 #export CCACHE_TMP_DIR="/tmp/ccache_tmp"
 #export CCACHE_DATA_DIR="/tmp/vespa/ccache"
 #export MAIN_CACHE_FILE="/tmp/vespa.tar"
