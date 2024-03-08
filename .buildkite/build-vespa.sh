@@ -40,7 +40,7 @@ time make -j ${NUM_THREADS}
 time ctest3 --output-on-failure -j ${NUM_THREADS}
 
 echo "Waiting for Java build ..."
-time wait || (cat maven_output.log && exit 1)
+time wait || (cat maven_output.log && false)
 cat maven_output.log
 
 time make -j ${NUM_THREADS} install DESTDIR=$WORKDIR/vespa-install
