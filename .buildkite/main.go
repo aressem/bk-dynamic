@@ -48,22 +48,22 @@ func getVolumeMounts() []any {
 	}
 }
 
-func restoreCache() string {
+func restoreCache(arch string) string {
 	if isPullRequest() {
 		return "&& dnf install -y awscli " +
-			"&& ( (aws s3 cp s3://381492154096-build-artifacts/cache.tar - | tar -C /root -x) || true) "
+			"&& ( (aws s3 cp s3://381492154096-build-artifacts/cache-" + arch + ".tar - | tar -C /root -x) || true) "
 	} else {
 		return ""
 	}
 }
 
-func saveCache() string {
+func saveCache(arch string) string {
 	if isPullRequest() {
 		return ""
 	} else {
 		return "&& mkdir -p /root/.ccache /root/.m2/repository /root/.go " +
-			"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache.tar  .ccache .m2/repository .go " +
-			"&& buildkite-agent artifact upload cache.tar s3://381492154096-build-artifacts "
+			"&& tar -C /root --exclude '.m2/repository/com/yahoo/vespa' -cf cache-" + arch + ".tar  .ccache .m2/repository .go " +
+			"&& buildkite-agent artifact upload cache-" + arch + ".tar s3://381492154096-build-artifacts "
 	}
 }
 
@@ -91,7 +91,7 @@ func getVespaVersion() string {
 func getBuildCommand(vespaVersion string, arch string) string {
 	return fmt.Sprintf("'" +
 		"pwd " +
-		restoreCache() +
+		restoreCache(arch) +
 		"&& mkdir -p /tmp/ccache_tmp " +
 		"&& ccache -s -p" +
 		"&& ccache -z -o temporary_dir=/tmp/ccache_tmp -o compression=true -M 20G " +
@@ -103,7 +103,7 @@ func getBuildCommand(vespaVersion string, arch string) string {
 		"&& ccache -s " +
 		"&& buildkite-agent artifact upload '*.log' " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
-		saveCache() +
+		saveCache(arch) +
 		saveArtifacts(vespaVersion, arch) +
 		"'")
 
