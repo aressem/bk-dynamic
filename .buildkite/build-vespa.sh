@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
+ARCH=$1
+
 export VESPA_MAVEN_EXTRA_OPTS="--show-version --batch-mode --no-snapshot-updates -Dmaven.javadoc.skip=true \
-  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/maven-repo" # deploy" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
+  -Dmaven.source.skip=true -DaltDeploymentRepository=local-repo::default::file:$(pwd)/artifacts/$ARCH/maven-repo" # deploy" # -Dmaven.repo.local=/tmp/vespa/mvnrepo
 #export CCACHE_TMP_DIR="/tmp/ccache_tmp"
 #export CCACHE_DATA_DIR="/tmp/vespa/ccache"
 #export MAIN_CACHE_FILE="/tmp/vespa.tar"
@@ -19,13 +21,14 @@ export WORKDIR=/tmp
 
 source /etc/profile.d/enable-gcc-toolset.sh
 
-mkdir -p $(pwd)/artifacts/{maven-repo,rpms}
+mkdir -p $(pwd)/artifacts/$ARCH/{rpms,maven-repo}
 
 screwdriver/replace-vespa-version-in-poms.sh $VESPA_VERSION $(pwd)
 time make -C client/go BIN=$WORKDIR/vespa-install/opt/vespa/bin SHARE=$WORKDIR/vespa-install/usr/share install-all
 
 # Having both install and deploy in the same maven command does not work
 sed -i 's,clean install,clean deploy,' bootstrap.sh
+
 time ./bootstrap.sh full
 
 # To allow Java and C++ tests to run in parallel, we need to copy the test jars
@@ -55,7 +58,7 @@ time rpmbuild --rebuild --define="_topdir $WORKDIR/vespa-rpmbuild" \
                         --define "_debugsource_template %{nil}" \
                         --define "installdir $WORKDIR/vespa-install" $WORKDIR/*.src.rpm
 
-mv /tmp/vespa-rpmbuild/RPMS/*/*.rpm $(pwd)/artifacts/rpms
+mv /tmp/vespa-rpmbuild/RPMS/*/*.rpm $(pwd)/artifacts/$ARCH/rpms
 
 # Sign artifacts
 # Debug

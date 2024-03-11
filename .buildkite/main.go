@@ -10,7 +10,7 @@ import (
 func isPullRequest() bool {
 	return os.Getenv("BUILDKITE_PULL_REQUEST") != "false"
 }
-func getVolumes() []any {
+func getVolumes(arch string) []any {
 	if isPullRequest() {
 		return []any{}
 	} else {
@@ -18,13 +18,13 @@ func getVolumes() []any {
 			map[string]any{
 				"name": "vespa-build-maven-cache",
 				"persistentVolumeClaim": map[string]string{
-					"claimName": "vespa-build-maven-cache",
+					"claimName": "vespa-build-maven-cache-" + arch,
 				},
 			},
 			map[string]any{
 				"name": "vespa-build-ccache",
 				"persistentVolumeClaim": map[string]string{
-					"claimName": "vespa-build-ccache",
+					"claimName": "vespa-build-ccache-" + arch,
 				},
 			},
 		}
@@ -67,7 +67,7 @@ func saveCache() string {
 	}
 }
 
-func saveArtifacts(version string) string {
+func saveArtifacts(version string, arch string) string {
 	if isPullRequest() {
 		return ""
 	} else {
@@ -87,11 +87,9 @@ func getVespaVersion() string {
 	}
 	return vespaVersion
 }
-func main() {
 
-	vespaVersion := getVespaVersion()
-
-	cmd := fmt.Sprintf("'" +
+func getBuildCommand(vespaVersion string, arch string) string {
+	return fmt.Sprintf("'" +
 		"pwd " +
 		restoreCache() +
 		"&& mkdir -p /tmp/ccache_tmp " +
@@ -101,78 +99,89 @@ func main() {
 		"&& export FACTORY_VESPA_VERSION=\\$VESPA_VERSION " +
 		"&& (git tag v\\$VESPA_VERSION) " +
 		"&& git clone --depth 1 https://github.com/aressem/bk-dynamic" +
-		"&& bk-dynamic/.buildkite/build-vespa.sh " +
+		"&& bk-dynamic/.buildkite/build-vespa.sh " + arch + " " +
 		"&& ccache -s " +
 		"&& buildkite-agent artifact upload '*.log' " +
 		"&& du -sh /root/.m2 && du -sh /root/.ccache " +
 		saveCache() +
-		saveArtifacts(vespaVersion) +
+		saveArtifacts(vespaVersion, arch) +
 		"'")
+
+}
+
+func main() {
+
+	vespaVersion := getVespaVersion()
 
 	//fmt.Println(cmd)
 
 	pipe := &pipeline.Pipeline{}
-	step := &pipeline.CommandStep{
-		Label: "Vespa build!",
-		Env: map[string]string{
-			"BUILDKITE_GIT_CLONE_FLAGS": "--filter tree:0",
-		},
-	}
 
-	plug := &pipeline.Plugin{
-		Source: "kubernetes",
-		Config: map[string]any{
-			"podSpec": map[string]any{
-				"volumes": getVolumes(),
-				"containers": []any{
-					map[string]any{
-						"name": "build-container",
-						"args": []string{
-							cmd,
-						},
-						"command": []any{
-							"sh",
-							"-c",
-						},
-						"env": []any{
-							map[string]string{
-								"name":  "VESPA_VERSION",
-								"value": vespaVersion,
+	// iterate over a list of strings
+	for _, arch := range []string{"amd64", "arm64"} {
+
+		step := &pipeline.CommandStep{
+			Label: "Build Vespa version " + vespaVersion + " on linux/" + arch,
+			Env: map[string]string{
+				"BUILDKITE_GIT_CLONE_FLAGS": "--filter tree:0",
+			},
+		}
+
+		plug := &pipeline.Plugin{
+			Source: "kubernetes",
+			Config: map[string]any{
+				"podSpec": map[string]any{
+					"volumes": getVolumes(arch),
+					"containers": []any{
+						map[string]any{
+							"name": "build-container",
+							"args": []string{
+								getBuildCommand(vespaVersion, arch),
 							},
-							map[string]string{
-								"name":  "BUILDKITE_S3_ACL",
-								"value": "private",
+							"command": []any{
+								"sh",
+								"-c",
 							},
-							map[string]any{
-								"name": "NUM_CPU_LIMIT",
-								"valueFrom": map[string]any{
-									"resourceFieldRef": map[string]string{
-										"containerName": "build-container",
-										"resource":      "limits.cpu",
+							"env": []any{
+								map[string]string{
+									"name":  "VESPA_VERSION",
+									"value": vespaVersion,
+								},
+								map[string]string{
+									"name":  "BUILDKITE_S3_ACL",
+									"value": "private",
+								},
+								map[string]any{
+									"name": "NUM_CPU_LIMIT",
+									"valueFrom": map[string]any{
+										"resourceFieldRef": map[string]string{
+											"containerName": "build-container",
+											"resource":      "limits.cpu",
+										},
 									},
 								},
 							},
-						},
-						"image": "docker.io/vespaengine/vespa-build-almalinux-8",
-						"resources": map[string]any{
-							"limits": map[string]any{
-								"cpu":    "15",
-								"memory": "30G",
+							"image": "docker.io/vespaengine/vespa-build-almalinux-8",
+							"resources": map[string]any{
+								"limits": map[string]any{
+									"cpu":    "15",
+									"memory": "30G",
+								},
 							},
+							"volumeMounts": getVolumeMounts(),
 						},
-						"volumeMounts": getVolumeMounts(),
 					},
+					"nodeSelector": map[string]any{
+						"node-arch": arch,
+					},
+					"priorityClassName": "system-node-critical",
 				},
-				"nodeSelector": map[string]any{
-					"node-arch": "arm64",
-				},
-				"priorityClassName": "system-node-critical",
 			},
-		},
-	}
+		}
 
-	step.Plugins = append(step.Plugins, plug)
-	pipe.Steps = append(pipe.Steps, step)
+		step.Plugins = append(step.Plugins, plug)
+		pipe.Steps = append(pipe.Steps, step)
+	}
 
 	yout, err := yaml.Marshal(pipe)
 	if err != nil {
