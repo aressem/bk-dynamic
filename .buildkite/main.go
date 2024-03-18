@@ -130,8 +130,16 @@ func main() {
 		plug := &pipeline.Plugin{
 			Source: "kubernetes",
 			Config: map[string]any{
+				"gitEnvFrom": []any{
+					map[string]any{
+						"secretRef": map[string]string{
+							"name": "github-vespaai-buildkite-access",
+						},
+					},
+				},
 				"podSpec": map[string]any{
 					"volumes": getVolumes(arch),
+
 					"containers": []any{
 						map[string]any{
 							"name": "build-container",
